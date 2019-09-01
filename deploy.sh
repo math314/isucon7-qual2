@@ -11,13 +11,13 @@ scp -r mysql/mysql.conf.d ${REMOTE}:/tmp/etc/mysql
 scp copyFiles.sh ${REMOTE}:/tmp
 ssh ${REMOTE} "/tmp/copyFiles.sh"
 
-# cd app/src
-# ./setup.sh
-# cd ../..
+cd webapp/go
+GOOS=linux GOARCH=amd64 make
+cd ../..
 
 ssh ${REMOTE} "sudo systemctl stop isubata.golang.service"
 
-# scp app/src/app ${REMOTE}:/home/isucon/private_isu/webapp/golang
+scp webapp/go/isubata ${REMOTE}:/home/isucon/isubata/webapp/go/isubata
 # scp -r app/src/templates ${REMOTE}:/home/isucon/private_isu/webapp/golang
 
 ssh ${REMOTE} "sudo systemctl restart nginx.service"
