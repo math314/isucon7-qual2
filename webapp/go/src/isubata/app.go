@@ -75,6 +75,36 @@ func init() {
 	db.SetMaxOpenConns(20)
 	db.SetConnMaxLifetime(5 * time.Minute)
 	log.Printf("Succeeded to connect db.")
+
+	// アイコンの保存場所を作成
+	os.Mkdir("icon", 0777)
+}
+
+func init2(c echo.Context) error {
+	rows, err := db.Query("SELECT name, data FROM image")
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	s := ""
+	for rows.Next() {
+		var name string
+		var data []byte
+		rows.Scan(&name, &data)
+		s += name
+
+		// アイコンを静的に保存
+		file, err := os.OpenFile("icons/"+name, os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			return err
+		}
+		file.Write(data)
+		file.Close()
+
+	}
+
+	return c.String(http.StatusOK, "Success : "+s)
 }
 
 type User struct {
@@ -202,10 +232,6 @@ func getInitialize(c echo.Context) error {
 	db.MustExec("DELETE FROM channel WHERE id > 10")
 	db.MustExec("DELETE FROM message WHERE id > 10000")
 	db.MustExec("DELETE FROM haveread")
-
-	// アイコンの保存場所を作成
-	os.Mkdir("icons", 0777)
-
 	return c.String(204, "")
 }
 
@@ -743,6 +769,7 @@ func main() {
 	e.Use(middleware.Static("../public"))
 
 	e.GET("/initialize", getInitialize)
+	e.GET("/debug/init2", init2)
 	e.GET("/", getIndex)
 	e.GET("/register", getRegister)
 	e.POST("/register", postRegister)
