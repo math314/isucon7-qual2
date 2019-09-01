@@ -439,6 +439,26 @@ func queryChannels() ([]int64, error) {
 	return res, err
 }
 
+type HaveRead2 struct {
+	MessageID int64     `db:"message_id"`
+	ChannelID int64     `db:"channel_id"`
+}
+
+func queryHaveRead2(userID int64) (map[int64]int64, error) {
+	hr2 := []HaveRead2{}
+	err := db.Select(&hr2, "SELECT channel_id, message_id FROM haveread WHERE user_id = ?", userID)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := map[int64]int64{}
+
+	for _, x := range hr2 {
+		ret[x.ChannelID] = x.MessageID
+	}
+	return ret, nil
+}
+
 func queryHaveRead(userID, chID int64) (int64, error) {
 	type HaveRead struct {
 		UserID    int64     `db:"user_id"`
@@ -466,7 +486,7 @@ func fetchUnread(c echo.Context) error {
 		return c.NoContent(http.StatusForbidden)
 	}
 
-	time.Sleep(time.Second)
+	// time.Sleep(time.Second)
 
 	channels, err := queryChannels()
 	if err != nil {
@@ -475,11 +495,13 @@ func fetchUnread(c echo.Context) error {
 
 	resp := []map[string]interface{}{}
 
+	channelIDsToMessageId, err := queryHaveRead2(userID)
+	if err != nil {
+		return err
+	}
+
 	for _, chID := range channels {
-		lastID, err := queryHaveRead(userID, chID)
-		if err != nil {
-			return err
-		}
+		lastID := channelIDsToMessageId[chID]
 
 		var cnt int64
 		if lastID > 0 {

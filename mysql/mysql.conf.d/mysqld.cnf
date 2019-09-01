@@ -108,6 +108,6 @@ skip-grant-tables
 innodb_flush_method = O_DIRECT
 innodb_flush_log_at_trx_commit = 2
 
-slow_query_log                = 1
-slow_query_log_file           = /tmp/mysqld-slow.log
-long_query_time               = 0
+# slow_query_log                = 1
+# slow_query_log_file           = /tmp/mysqld-slow.log
+# long_query_time               = 0
