@@ -202,6 +202,10 @@ func getInitialize(c echo.Context) error {
 	db.MustExec("DELETE FROM channel WHERE id > 10")
 	db.MustExec("DELETE FROM message WHERE id > 10000")
 	db.MustExec("DELETE FROM haveread")
+
+	// アイコンの保存場所を作成
+	os.Mkdir("icon", 0777)
+
 	return c.String(204, "")
 }
 
@@ -660,6 +664,15 @@ func postProfile(c echo.Context) error {
 		if err != nil {
 			return err
 		}
+
+		// アイコンを静的に保存
+		file, err := os.OpenFile("icon/"+avatarName, os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			return err
+		}
+		file.Write(avatarData)
+		file.Close()
+
 		_, err = db.Exec("UPDATE user SET avatar_icon = ? WHERE id = ?", avatarName, self.ID)
 		if err != nil {
 			return err
