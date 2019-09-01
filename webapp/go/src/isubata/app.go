@@ -95,7 +95,7 @@ func init2(c echo.Context) error {
 		s += name
 
 		// アイコンを静的に保存
-		file, err := os.OpenFile("icon/"+name, os.O_CREATE|os.O_WRONLY, 0666)
+		file, err := os.OpenFile("icons/"+name, os.O_CREATE|os.O_WRONLY, 0666)
 		if err != nil {
 			return err
 		}
