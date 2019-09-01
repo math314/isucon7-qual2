@@ -692,7 +692,7 @@ func postProfile(c echo.Context) error {
 		}
 
 		// アイコンを静的に保存
-		file, err := os.OpenFile("icon/"+avatarName, os.O_CREATE|os.O_WRONLY, 0666)
+		file, err := os.OpenFile("icons/"+avatarName, os.O_CREATE|os.O_WRONLY, 0666)
 		if err != nil {
 			return err
 		}
