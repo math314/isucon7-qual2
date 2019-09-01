@@ -77,7 +77,7 @@ func init() {
 	log.Printf("Succeeded to connect db.")
 
 	// アイコンの保存場所を作成
-	os.Mkdir("icon", 0777)
+	os.Mkdir("icons", 0777)
 }
 
 func init2(c echo.Context) error {
