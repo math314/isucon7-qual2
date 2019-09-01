@@ -204,7 +204,7 @@ func getInitialize(c echo.Context) error {
 	db.MustExec("DELETE FROM haveread")
 
 	// アイコンの保存場所を作成
-	os.Mkdir("icon", 0777)
+	os.Mkdir("icons", 0777)
 
 	return c.String(204, "")
 }
